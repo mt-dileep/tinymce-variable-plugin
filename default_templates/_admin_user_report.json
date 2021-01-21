@@ -1,0 +1,21 @@
+{
+    "id": "_admin_user_report",
+    "name": "User Report",
+    "subject": "Detailed Report | $user_name$",
+    "from": "$from_name$",
+    "visibility": "public",
+    "tags": [
+        "report",
+        "entity",
+        "admin"
+    ],
+    "owner": "_default",
+    "company": "_default",
+    "entity": "_default",
+    "body": "Please find attached the detailed report for <b>$user_name$</b>.",
+    "modules": [],
+    "recipients": [],
+    "categories": ["Others"],
+    "description": "",
+    "lastUpdatedBy": "_default"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "_voss_task_reminder",
+  "name": "Task Reminder",
+  "subject": "Join MindTickle and Create Engaging Content Today!",
+  "body": "",
+  "from": "$from_name$",
+  "company": "_default",
+  "owner": "_default",
+  "visibility": "public",
+  "tags": [],
+  "modules": [],
+  "recipients": [],
+  "categories": ["Others"],
+  "description": "",
+  "lastUpdatedBy": "_default"
+}

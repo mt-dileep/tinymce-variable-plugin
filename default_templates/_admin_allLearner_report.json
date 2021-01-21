@@ -1,0 +1,19 @@
+{
+    "id": "_admin_allLearner_report",
+    "name": "All Learner Report",
+    "subject": "Detailed Report",
+    "from": "$from_name$",
+    "visibility": "public",
+    "tags": [
+        "report",
+        "admin"
+    ],
+    "owner": "_default",
+    "company": "_default",
+    "body": "Please find attached the detailed report for <b>$company_name$</b>.",
+    "modules": [],
+    "recipients": [],
+    "categories": ["Others"],
+    "description": "",
+    "lastUpdatedBy": "_default"
+}

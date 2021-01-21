@@ -1,0 +1,156 @@
+<html>
+  <head>
+    <script
+      type="text/javascript"
+      src="https://assets.mindtickle.com/selfserve/prod/bower_components/tinymce/tinymce.min.586ce1e0.js"
+    ></script>
+    <!-- <script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script> -->
+
+    <script type="text/javascript" src="plugin.js"></script>
+    <script type="text/javascript">
+      var variableMapper = {
+        account_id: "Account ID"
+      };
+      function addToVariableMap(variable, readable) {
+        variableMapper[variable] = readable;
+      }
+
+      var variablesMenu = [];
+
+      tinymce.init({
+        // basic tinyMCE stuff
+        content_css: "style.css",
+        selector: "textarea",
+        menubar: "tools",
+        toolbar: "bold italic code mybutton searchreplace template Variables",
+        statusbar: false,
+        table_advtab: false,
+        table_row_advtab: false,
+        table_cell_advtab: false,
+        table_default_styles: {
+          border: 0,
+          background: "none"
+        },
+
+        insert_button_items: variablesMenu,
+        setup: function (editor) {
+          console.log("in setup ............................");
+          window.tester = editor;
+          var content = document.querySelector("textarea").value;
+
+          var matches = content.match(/\$\w+\$/g);
+          matches.forEach(function (match) {
+            var newVar = match.slice(1, match.length - 1);
+            addToVariableMap(newVar, newVar.replaceAll("_", " ").toUpperCase());
+            variablesMenu.push({ text: newVar, value: match });
+          });
+
+          //add in menu bar tools option
+          editor.addMenuItem("myitem", {
+            text: "My menu item",
+            context: "tools",
+            onclick: function () {
+              editor.insertContent("&nbsp;Here's some content!&nbsp;");
+            }
+          });
+
+          //   editor.ui.registry.addMenuButton("Variables", {
+          //     text: "Variables",
+          //     tooltip: "Insert variable",
+          //     fetch: (callback) => {
+          //       var items = variablesMenu.map((v) => {
+          //         return {
+          //           type: "menuitem",
+          //           text: v.text,
+          //           onAction: () => {
+          //             // Insert content at the location of the cursor.
+          //             // https://www.tiny.cloud/docs/api/tinymce/tinymce.editor/#insertcontent
+          //             editor.insertContent(v.value);
+          //           }
+          //         };
+          //       });
+          //       callback(items);
+          //     }
+          //   });
+
+          //   editor.on("init", function () {
+          //     var content = document.getElementById("textarea").value;
+          //     //   content = content.replace(
+          //     //     /(<%[^=].*[^%>].*%>)/g,
+          //     //     "Series Entities"
+          //     //   );
+          //     content.replace(/\$\w+\$/g, function (match) {
+          //       var newVar = match.slice(1, match.length - 1);
+          //       addToVariableMap(
+          //         newVar,
+          //         newVar.replaceAll("_", " ").toUpperCase()
+          //       );
+          //       //   editor.plugins.variables.addVariable(newVar);
+          //       return newVar;
+          //     });
+          //     //   editor.setContent(newC);
+          //   });
+
+          editor.addButton("mybutton", {
+            title: "My button",
+            text: "Insert variable",
+            onclick: function () {
+              editor.plugins.variables.addVariable("account_id");
+            }
+          });
+
+          editor.on("variableClick", function (e) {
+            console.log("click", e);
+          });
+        },
+
+        // variable plugin related
+        plugins: "variables code lists",
+        variable_mapper: variableMapper,
+        variable_prefix: "<%=",
+        variable_suffix: "%>",
+        height: 740,
+        // variable_class: 'bbbx-my-variable',
+        //variable_valid: ['username', 'sender', 'phone', 'community_name', 'email']
+        // test block  ------------------------------------------------------
+        init_instance_callback: function (editor) {
+          console.log("Editor: " + editor.id + " is now initialized.");
+        }
+
+        // templates: [
+        //   {
+        //     title: "Series Invitation",
+        //     url: "tinytml.html",
+        //     description: "Invitation tmplate"
+        //   }
+        // ],
+        // template_replace_values: {
+        //   name: "Jack Black",
+        //   series_name: "Series kbsadsnvk sdvkdfs "
+        // }
+        // test block  ------------------------------------------------------
+      });
+    </script>
+    <style type="text/css">
+      .variable {
+        cursor: default;
+        background-color: #65b9dd;
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-weight: bold;
+        font-style: normal;
+        font-size: 10px;
+        display: inline-block;
+        line-height: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <form method="post">
+      <textarea rows="18">
+<table width="100%" cellspacing="0" cellpadding="0" rowspan="0" colspan="0" border="0" style="font-family:open sans, helvetica, arial, verdana;"><tr><td><center><table width="600" style="border-bottom:1px solid #e4e4e4;border:15px solid #fff;background:#fff;"><tr><td colspan="2" align="left" style="padding:0;margin:0"> <a style="font-weight:bold;color:#000000;border:0;text-decoration:none;cursor:auto"> <img width="auto" height="63" style="max-width:250px;max-height:63px;border:0;line-height:20px;display:block" title="$company_name$" src="$company_logo$" alt="$company_name$"> </a></td></tr><tr><td colspan="2" style="line-height:20px;padding:0;margin:0"> </td></tr><tr><td colspan="2" style="border-top:1px solid #f0f0f0;padding:0;margin:0"> </td></tr><tr><td colspan="2" style="color:#000000;font-size:18px;padding:0;margin:0;font-family:open sans, helvetica, arial, verdana;">Hi $name$,</td></tr><tr><td colspan="2"> </td></tr><tr><td colspan="2" style="color:#000;font-size:13px;padding:0;margin:0;font-family:open sans, helvetica, arial, verdana;">I invite you to the Series '$series_name$'. $has_entities$</td></tr><tr><td colspan="2"> </td></tr><tr><td colspan="2" style="color:#000;font-size:13px;padding:0;margin:0;font-family:open sans, helvetica, arial, verdana;"><%= seriesInfo.seriesDescString %></td></tr><tr><td colspan="2"> </td></tr><tr><td colspan="2"><% var dueDate = true; var i = 0 %> <% for(i=0; i < entityInfo.length && i < 5; i++) { %></td></tr><tr><td colspan="2"> </td></tr><tr><td colspan="2"><% var color = entityInfo[i].dueDate.match("today") || entityInfo[i].dueDate.match("tomorrow") ? "red" : "other" %></td></tr><tr><td colspan="2" align="left" valign="top"><table style="width:100%" border="0" cellspacing="0" cellpadding="0"><tr colspan="2"><td width="160" valign="top" style="padding-right:20px;"> <a style="font-size:16px;font-weight:bold;color:#000000;border:0;text-decoration:none;cursor:auto;" href="<%= entityInfo[i].entityUrl %>"> <img width="160" height="95" style="max-width:140px;max-height:95px;width:140px;height:95px;border:0;" title="<%= entityInfo[i].entityName %>" src="<%= entityInfo[i].entityLogo %>" alt="<%= entityInfo[i].entityName %>"> </a></td><td valign="top"> <a href="<%= entityInfo[i].entityUrl %>" style="text-decoration:none;font-size:13px;font-family:open sans, helvetica, arial, verdana;"><div> <% if(entityInfo[i].entityType == 'COURSE') { %> <span style="color:#ffffff;font-size:10px;background:#77bf86; border-style: solid;border-width:2px 5px 2px 5px;border-color:#77bf86;font-family: open sans, helvetica, arial, verdana;font-size:12px;display:inline-block;text-align:center;"> <span style="visibility: hidden;font-size: 1px;line-height: 9px; width: 1px;height: 10px;color:#77bf86;"> </span> C <span style="visibility: hidden;font-size: 1px;line-height: 9px;color:#77bf86; width: 1px;height: 10px;"> </span> </span> <span> </span><span> </span> <span style="color:#0072bc;font-size:13px;font-family: open sans, helvetica, arial, verdana;"><%= entityInfo[i].entityName %></span> <% } %></div><div> <% if(entityInfo[i].entityType == 'UPDATE') { %> <span style="color:#ffffff;font-size:10px;background:#dd7d7e;border-style: solid;border-width:2px 5px 2px 5px;border-color:#dd7d7e;font-family: open sans, helvetica, arial, verdana;line-height:16px;font-size:12px;display:inline-block;text-align:center;"> <span style="visibility: hidden;font-size: 1px;line-height: 9px; width: 1px;height: 10px;color:#dd7d7e;background-color:#dd7d7e;"> </span> Q <span style="visibility: hidden;font-size: 1px;line-height: 9px; width: 1px;height: 10px;color:#dd7d7e;background-color:#dd7d7e;"> </span> </span> <span> </span><span> </span> <span style="color:#0072bc;font-size:13px;font-family: open sans, helvetica, arial, verdana;"><%= entityInfo[i].entityName %></span> <% } %></div><div> <% if(entityInfo[i].entityType == 'REINFORCEMENT') { %> <span style="color:#ffffff;font-size:10px;background:#52B5BB;border-style: solid;border-width:2px 5px 2px 5px;border-color:#52B5BB;font-family: open sans, helvetica, arial, verdana;line-height:16px;font-size:12px;display:inline-block;text-align:center;"> <span style="visibility: hidden;font-size: 1px;line-height: 9px; width: 1px;height: 10px;color:#52B5BB;background-color:#52B5BB;"> </span> R <span style="visibility: hidden;font-size: 1px;line-height: 9px; width: 1px;height: 10px;color:#52B5BB;background-color:#52B5BB;"> </span> </span> <span> </span><span> </span> <span style="color:#0072bc;font-size:13px;font-family: open sans, helvetica, arial, verdana;"><%= entityInfo[i].entityName %></span> <% } %></div><div> <% if(entityInfo[i].entityType == 'MISSION' || entityInfo[i].entityType == 'VOICE_OVER_PPT_COACHING' || entityInfo[i].entityType == 'VIDEO_PITCH_COACHING' || entityInfo[i].entityType == 'TASK_EVALUATION_COACHING' || entityInfo[i].entityType == 'SCREEN_CAPTURE_COACHING') { %> <span style="color:#ffffff;font-size:10px;background:#7d9baf;border-style: solid;border-width:2px 5px 2px 5px;border-color:#7d9baf;font-family: open sans, helvetica, arial, verdana;font-size:12px;display:inline-block;text-align:center;line-height:16px;"> <span style="visibility: hidden;font-size: 1px;line-height: 9px; width: 1px;height: 10px;color:#7d9baf;"> </span> M <span style="visibility: hidden;font-size: 1px;line-height: 9px; width: 1px;height: 10px;color:#7d9baf;"> </span> </span> <span> </span><span> </span> <span style="color:#0072bc;font-size:13px;font-family: open sans, helvetica, arial, verdana;"><%= entityInfo[i].entityName %></span> <% } %></div><div> <% if(entityInfo[i].entityType == 'ASSESSMENT') { %> <span style="color:#ffffff;font-size:10px;background:#d49b49;border-style: solid;border-width:2px 5px 2px 5px;border-color:#d49b49;font-family: open sans, helvetica, arial, verdana;font-size:12px;display:inline-block;text-align:center;line-height:16px;"> <span style="visibility: hidden;font-size: 1px;line-height: 9px; width: 1px;height: 10px;color:#7d9baf;"> </span> A <span style="visibility: hidden;font-size: 1px;line-height: 9px; width: 1px;height: 10px;color:#7d9baf;"> </span> </span> <span> </span><span> </span> <span style="color:#0072bc;font-size:13px;font-family: open sans, helvetica, arial, verdana;"><%= entityInfo[i].entityName %></span> <% } %></div><div> <% if(entityInfo[i].entityType == 'COACHING' || entityInfo[i].entityType == 'PERFORMANCE_EVALUATION_COACHING') { %> <span style="color:#ffffff;font-size:10px;background:#4db5bc;border-style: solid;border-width:2px 5px 2px 5px;border-color:#4db5bc;font-family: open sans, helvetica, arial, verdana;font-size:12px;display:inline-block;text-align:center;line-height:16px;"> <span style="visibility: hidden;font-size: 1px;line-height: 9px; width: 1px;height: 10px;color:#4db5bc;"> </span> S <span style="visibility: hidden;font-size: 1px;line-height: 9px; width: 1px;height: 10px;color:#4db5bc;"> </span> </span> <span> </span><span> </span> <span style="color:#0072bc;font-size:13px;font-family: open sans, helvetica, arial, verdana;"><%= entityInfo[i].entityName %></span> <% } %></div><div> <% if(entityInfo[i].entityType == 'CHECKLIST') { %> <span style="color:#ffffff;font-size:10px;background:#8e8cc2;border-style: solid;border-width:2px 5px 2px 5px;border-color:#8e8cc2;font-family: open sans, helvetica, arial, verdana;font-size:12px;display:inline-block;text-align:center;line-height:16px;"> <span style="visibility: hidden;font-size: 1px;line-height: 9px; width: 1px;height: 10px;color:#4db5bc;"> </span> L <span style="visibility: hidden;font-size: 1px;line-height: 9px; width: 1px;height: 10px;color:#4db5bc;"> </span> </span> <span> </span><span> </span> <span style="color:#0072bc;font-size:13px;font-family: open sans, helvetica, arial, verdana;"><%= entityInfo[i].entityName %></span> <% } %></div><div> <% if(entityInfo[i].entityType == 'ILT') { %> <span style="color:#ffffff;font-size:10px;background:#76afeb;border-style: solid;border-width:2px 5px 2px 5px;border-color:#76afeb;font-family: open sans, helvetica, arial, verdana;font-size:12px;display:inline-block;text-align:center;line-height:16px;"> <span style="visibility: hidden;font-size: 1px;line-height: 9px; width: 1px;height: 10px;color:#4db5bc;"> </span> I <span style="visibility: hidden;font-size: 1px;line-height: 9px; width: 1px;height: 10px;color:#4db5bc;"> </span> </span> <span> </span><span> </span> <span style="color:#0072bc;font-size:13px;font-family: open sans, helvetica, arial, verdana;"><%= entityInfo[i].entityName %></span> <% } %></div> </a> <br/> <% if(color=="red") {%> <a style="color:#ed1c24;line-height:22px;font-size:13px;font-family: open sans, helvetica, arial, verdana;text-decoration:none;cursor:auto;display:<%= entityInfo[i].dueDateVisibility %>"> <%= entityInfo[i].dueDateString%> </a> <% } else {%> <a style="color:#999;line-height:22px;font-size:13px;font-family: open sans, helvetica, arial, verdana;text-decoration:none;cursor:auto;display:<%= entityInfo[i].dueDateVisibility %>"> <%= entityInfo[i].dueDateString%> </a> <%}%> <br/> <span style="color:#000;font-size:13px;font-family: open sans, helvetica, arial, verdana;line-height:22px;margin:0px;"><%= entityInfo[i].entityDescTrunc %></span> <br/></td></tr><tr><td colspan="2" > </td></tr></table> <% } %></td></tr><tr><td colspan="2" style="line-height:20px;padding:0;margin:0"> </td></tr><tr><td colspan="2" align="center" valign="top" width="200" style="padding-left:20px;font-family:open sans, helvetica, arial, verdana;"> <a style="border-radius:5px;text-decoration:none;font-size:14px; font-family:open sans, helvetica, arial, verdana;border:10px solid #0072bc;background:#0072bc;display:block; width:180px;color:white; height:20px; line-height:20px;" href="<%= seriesInfo.seriesUrl %>" target="_blank">View Series</a></td></tr><tr><td colspan="2" style="padding:0;margin:0"> </td></tr><tr><td colspan="2" align="left" valign="top" style="font-size:13px;color:#000;font-family:open sans, helvetica, arial, verdana;line-height:22px;" >Thanks,<br>$from_name$<br>$company_name$</td></tr><tr><td colspan="2" style="padding:0;margin:0"> </td></tr><tr><td colspan="2" > </td></tr><tr><td colspan="2" style="background:#fffbce;border:10px solid #fffbce;text-align:center;font-size:13px;font-family:open sans, helvetica, arial, verdana;"> <span style="color:#000000;">Learning Site URL: </span> <a style="color:#0072bc;font-size:12px;text-decoration:none" href="$company_link$" target="_blank">$company_link_text$.</a></td></tr><tr><td> </td></tr><tr style="text-align:center"><td style="font-size: 16px;font-family:open sans, helvetica, arial, verdana;">Download the MindTickle App for quick and offline access.</td></tr><tr><td> </td></tr><tr><td align="center" valign="top"> <a href="$mt_company_link$/app_redirect?type=ios" target="_blank"><img src="https://s3-ap-southeast-1.amazonaws.com/mtapps-cdn.mindtickle.com/mails/images/AppStore-icon.png" style="display:inline-block;margin-right:15px;"></a> <span> </span> <a href="$mt_company_link$/app_redirect?type=android" target="_blank"><img src="https://s3-ap-southeast-1.amazonaws.com/mtapps-cdn.mindtickle.com/mails/images/PlayStore-Icon.png" style="display:inline-block"></a></td></tr><tr><td style="line-height:10px;padding:0;margin:0"> </td></tr><tr><td align="center" style="font-style:italic;font-size:12px;color:#999;font-family:open sans, helvetica, arial, verdana;">Note: Few Mission types and Assessments are not yet available on mobile.</td></tr></table></center></td></tr><tr><td colspan="2"><center><table width="600" cellspacing="0" cellpadding="0" style="border-top:15px solid #f9f9f9;border-bottom:15px solid #f9f9f9;border-left:10px solid #f9f9f9;border-right:10px solid #f9f9f9;background:#f9f9f9"><tr><td style="line-height:18px;padding:0;margin:0;font-family:open sans, helvetica, arial, verdana;"> <span style="color:#7c7c7c;font-size:12px;font-family:Helvetica, Arial, Verdana, Trebuchet MS;font-family:open sans, helvetica, arial, verdana;">This email was sent to </span> <a style="color:#0072bc;font-size:12px;text-decoration:none;font-family:Helvetica, Arial, Verdana, Trebuchet MS;font-family:open sans, helvetica, arial, verdana;" href="mailto:$email$" target="_blank">$email$.</a> <span style="color:#7c7c7c;font-size:12px;font-family:Helvetica, Arial, Verdana, Trebuchet MS;font-family:open sans, helvetica, arial, verdana;">You received this email because you were invited to</span> <a style="color:#0072bc;font-size:12px;text-decoration:none;font-family:Helvetica, Arial, Verdana, Trebuchet MS;font-family:open sans, helvetica, arial, verdana;" href="$company_link$" target="_blank">$company_name$.</a></td></tr></table></center></td></tr><tr><td colspan="2"><center><table width="600" style="border:0px"><tr><td align="right" valign="top" style="border:10px solid #eee;background: #eee;"> <img src="https://s3-ap-southeast-1.amazonaws.com/mtapps-cdn.mindtickle.com/mails/images/mt-logo.png" style="display:block"/></td></tr></table></center></td></tr><tr><td colspan="2"> </td></tr><tr><td colspan="2"> </td></tr></table></textarea
+      >
+    </form>
+  </body>
+</html>

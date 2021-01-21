@@ -1,0 +1,21 @@
+{
+    "id": "_admin_entity_report",
+    "name": "Entity Report",
+    "subject": "Detailed Report | $course_name$",
+    "from": "$from_name$",
+    "visibility": "public",
+    "tags": [
+        "report",
+        "entity",
+        "admin"
+    ],
+    "owner": "_default",
+    "company": "_default",
+    "entity": "_default",
+    "body": "Please find attached the detailed report for <b>$course_name$</b>.",
+    "modules": [],
+    "recipients": [],
+    "categories": ["Others"],
+    "description": "",
+    "lastUpdatedBy": "_default"
+}
