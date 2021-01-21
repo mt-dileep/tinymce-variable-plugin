@@ -1,0 +1,1 @@
+# tinymce-variable-plugin
