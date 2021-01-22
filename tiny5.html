@@ -34,7 +34,8 @@
           content_css: "style.css",
           selector: "textarea",
           menubar: false,
-          toolbar: "bold italic code variables insert mysidebar",
+          toolbar:
+            "code variables | bold italic underline | bullist numlist outdent indent",
           statusbar: false,
           table_advtab: false,
           table_row_advtab: false,
@@ -81,7 +82,7 @@
                 editor.notificationManager.open({
                   type: "info",
                   text:
-                    "Scoped Variables must be used anywhere inside two 'EJS code' blocks where it is already in use. Global can be used anywhere in the template.",
+                    "Scoped Variables must be used inside two 'EJS code' blocks where it is already being used. Global can be used anywhere in the template.",
                   closeButton: true
                 });
                 var items = variablesMenu.map((v) => {
@@ -103,10 +104,22 @@
               // console.log("click", e);
               alert("This field is non-editable!");
             });
+            // editor.on("init", function () {
+            //   console.log("inti..............");
+
+            //   var content = document.getElementById("templateContent").value;
+            //   content = content.replace(/alt="[^"]*"/g, (match) => {
+            //     console.log("alt->", match[5]);
+            //     return match[5] == "$"
+            //       ? match.splice(5, 1)
+            //       : match.splice(5, 4);
+            //   });
+            //   editor.setContent(content);
+            // });
           },
 
           // variable plugin related
-          plugins: "variables code",
+          plugins: "variables code lists",
           variable_mapper: variableMapper,
           variable_prefix: "<%=",
           variable_suffix: "%>",
@@ -117,19 +130,6 @@
           init_instance_callback: function (editor) {
             console.log("Editor: " + editor.id + " is now initialized.");
           }
-
-          // templates: [
-          //   {
-          //     title: "Series Invitation",
-          //     url: "tinytml.html",
-          //     description: "Invitation tmplate"
-          //   }
-          // ],
-          // template_replace_values: {
-          //   name: "Jack Black",
-          //   series_name: "Series kbsadsnvk sdvkdfs "
-          // }
-          // test block  ------------------------------------------------------
         });
       };
       var urlParams = new URLSearchParams(window.location.search);

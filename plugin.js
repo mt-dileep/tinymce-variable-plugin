@@ -129,7 +129,6 @@ tinymce.PluginManager.add("variables", function (editor) {
       nodeValue,
       node,
       div;
-
     // find nodes that contain a string variable
     tinymce.walk(
       editor.getBody(),
@@ -230,6 +229,16 @@ tinymce.PluginManager.add("variables", function (editor) {
    * @return {void}
    */
   function handleContentRerender(e) {
+    console.log("before get content.............");
+    // tree walker test-------------------------
+    // var walker = new tinymce.dom.TreeWalker(
+    //   document.getElementById("templateContent_ifr")
+    // );
+
+    // do {
+    //   console.log(walker.current().toString().replaceAll("alt", "alt1"));
+    // } while (walker.next());
+    // tree walker test-------------------------
     // store cursor location
     return e.format === "raw" ? stringToHTML() : htmlToString();
     // restore cursor location

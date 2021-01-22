@@ -1,24 +1,39 @@
 body {
-    font-size: 14px;
-    line-height: 1.4em;
+  font-size: 14px;
+  line-height: 1.4em;
 }
 .variable {
-    cursor: default;
-    background-color: #65b9dd;
-    color: #FFF;
-    padding: 2px 8px;
-    border-radius: 3px;
-    font-weight: bold;
-    font-style: normal;
-    font-size: 10px;
-    display: inline-block;
-    line-height: 12px;
+  cursor: default;
+  background-color: #65b9dd;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-weight: bold;
+  font-style: normal;
+  font-size: 10px;
+  display: inline-block;
+  line-height: 12px;
 }
-.mce-item-table,.mce-item-table td,.mce-item-table th,.mce-item-table caption {
+/* .mce-item-table,.mce-item-table td,.mce-item-table th,.mce-item-table caption {
     border: none
 }
 
 td[data-mce-selected],th[data-mce-selected] {
     background-color: none !important
 }
-table.mce-item-table,.mce-item-table tr,.mce-item-table td{background: none !important, border:none !important;}
+table.mce-item-table,.mce-item-table tr,.mce-item-table td{background: none !important, border:none !important;} */
+
+.mce-item-table:not([border]),
+.mce-item-table:not([border]) caption,
+.mce-item-table:not([border]) td,
+.mce-item-table:not([border]) th,
+.mce-item-table[border="0"],
+.mce-item-table[border="0"] caption,
+.mce-item-table[border="0"] td,
+.mce-item-table[border="0"] th,
+table[style*="border-width: 0px"],
+table[style*="border-width: 0px"] caption,
+table[style*="border-width: 0px"] td,
+table[style*="border-width: 0px"] th {
+  border: none;
+}

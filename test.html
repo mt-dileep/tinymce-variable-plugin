@@ -73,23 +73,24 @@
           //     }
           //   });
 
-          //   editor.on("init", function () {
-          //     var content = document.getElementById("textarea").value;
-          //     //   content = content.replace(
-          //     //     /(<%[^=].*[^%>].*%>)/g,
-          //     //     "Series Entities"
-          //     //   );
-          //     content.replace(/\$\w+\$/g, function (match) {
-          //       var newVar = match.slice(1, match.length - 1);
-          //       addToVariableMap(
-          //         newVar,
-          //         newVar.replaceAll("_", " ").toUpperCase()
-          //       );
-          //       //   editor.plugins.variables.addVariable(newVar);
-          //       return newVar;
-          //     });
-          //     //   editor.setContent(newC);
-          //   });
+          editor.on("init", function () {
+            console.log("inti..............");
+            var content = document.getElementById("textarea").value;
+            //   content = content.replace(
+            //     /(<%[^=].*[^%>].*%>)/g,
+            //     "Series Entities"
+            //   );
+            content.replace(/\$\w+\$/g, function (match) {
+              var newVar = match.slice(1, match.length - 1);
+              addToVariableMap(
+                newVar,
+                newVar.replaceAll("_", " ").toUpperCase()
+              );
+              //   editor.plugins.variables.addVariable(newVar);
+              return newVar;
+            });
+            //   editor.setContent(newC);
+          });
 
           editor.addButton("mybutton", {
             title: "My button",
