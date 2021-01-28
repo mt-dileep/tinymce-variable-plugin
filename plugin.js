@@ -35,6 +35,9 @@ tinymce.PluginManager.add("variables", function (editor) {
    */
   var className = editor.getParam("variable_class", "variable");
 
+  //TODO make generic
+  escapeValue = (value) => (value == "$" ? "\\$" : value);
+
   /**
    * Prefix and suffix to use to mark a variable
    * @type {string}
@@ -43,18 +46,36 @@ tinymce.PluginManager.add("variables", function (editor) {
   var suffix = editor.getParam("variable_suffix", "}}");
   var stringVariableRegex = new RegExp(prefix + "(.*)?" + suffix, "g");
 
-  var prefix2 = "<%"; //editor.getParam("variable_prefix", "<%");
-  var suffix2 = "%>"; //editor.getParam("variable_suffix", "}}"); <%[^%][^>]*%>
-  var stringVariableRegex2 = new RegExp(
-    prefix2 + "[^=]" + "([^%][^>]*)?" + suffix2,
-    "g"
-  );
-  var prefix3 = "$"; //editor.getParam("variable_prefix", "<%");
-  var suffix3 = "$"; //editor.getParam("variable_suffix", "}}");
-  var stringVariableRegex3 = new RegExp(
-    "\\" + prefix3 + "\\w+" + "\\" + suffix3,
-    "g"
-  );
+  var extra_variable_ps = editor.getParam("extra_variable_ps");
+  var otherVariableRegexArr = [];
+  extra_variable_ps.forEach((value) => {
+    otherVariableRegexArr.push({
+      ...value,
+      regex: new RegExp(
+        escapeValue(value.prefix) + value.regex + escapeValue(value.suffix),
+        "g"
+      )
+    });
+  });
+
+  //TODO write generic
+  // console.log("otherVariableRegexArr: ", otherVariableRegexArr);
+  // var prefix2 = otherVariableRegexArr[0].prefix;
+  // var suffix2 = otherVariableRegexArr[0].suffix;
+  // var stringVariableRegex2 = otherVariableRegexArr[0].regex;
+  // var prefix3 = otherVariableRegexArr[1].prefix;
+  // var suffix3 = otherVariableRegexArr[1].suffix;
+  // var stringVariableRegex3 = otherVariableRegexArr[1].regex;
+
+  // var prefix2 = "<%";
+  // var suffix2 = "%>";
+  // var stringVariableRegex2 = new RegExp(
+  //   prefix2 + "[^=]([^%][^>]*)?" + suffix2,
+  //   "g"
+  // );
+  // var prefix3 = "\\$";
+  // var suffix3 = "\\$";
+  // var stringVariableRegex3 = new RegExp(prefix3 + "(.*)?" + suffix3, "g");
 
   /**
    * check if a certain variable is valid
@@ -72,7 +93,7 @@ tinymce.PluginManager.add("variables", function (editor) {
   function getMappedValue(cleanValue) {
     if (typeof mapper === "function") return mapper(cleanValue);
 
-    return mapper.hasOwnProperty(cleanValue) ? mapper[cleanValue] : "EJS Code";
+    return mapper.hasOwnProperty(cleanValue) ? mapper[cleanValue] : "EJS_CODE";
   }
 
   /**
@@ -107,7 +128,6 @@ tinymce.PluginManager.add("variables", function (editor) {
       cleanValue: cleanValue
     });
 
-    //TODO 1st variable= value;
     var variable = prefix + cleanValue + suffix;
     return (
       '<span class="' +
@@ -120,6 +140,14 @@ tinymce.PluginManager.add("variables", function (editor) {
     );
   }
 
+  replaceOtherVariables = (nodeValue) => {
+    otherVariableRegexArr.forEach(({ prefix, suffix, regex }) => {
+      nodeValue = nodeValue.replace(regex, function (value) {
+        return createHTMLVariable(value, prefix, suffix);
+      });
+    });
+    return nodeValue;
+  };
   /**
    * convert variable strings into html elements
    * @return {void}
@@ -137,11 +165,11 @@ tinymce.PluginManager.add("variables", function (editor) {
           n.nodeType == 3 &&
           n.nodeValue &&
           (stringVariableRegex.test(n.nodeValue) ||
-            stringVariableRegex2.test(n.nodeValue) ||
-            stringVariableRegex3.test(n.nodeValue))
+            otherVariableRegexArr.some(({ regex }) => {
+              return regex.test(n.nodeValue);
+            }))
         ) {
           nodeList.push(n);
-          //   console.log("=============> ", n.parentElement.getAttribute("alt"));
         }
       },
       "childNodes"
@@ -155,12 +183,8 @@ tinymce.PluginManager.add("variables", function (editor) {
           return createHTMLVariable(value, prefix, suffix);
         }
       );
-      nodeValue = nodeValue.replace(stringVariableRegex2, function (value) {
-        return createHTMLVariable(value, prefix2, suffix2);
-      });
-      nodeValue = nodeValue.replace(stringVariableRegex3, function (value) {
-        return createHTMLVariable(value, prefix3, suffix3);
-      });
+      nodeValue = replaceOtherVariables(nodeValue);
+
       div = editor.dom.create("div", null, nodeValue);
       while ((node = div.lastChild)) {
         editor.dom.insertAfter(node, nodeList[i]);

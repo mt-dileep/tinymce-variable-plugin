@@ -12,11 +12,15 @@
     <script type="text/javascript" src="plugin.js"></script>
     <script type="text/javascript">
       window.loadTemplateAndInitTinyMce = function () {
+        var REGEX = {
+          EJS_OP_VAR: "[\\s\\t\\n]*[a-zA-Z.0-9[\\]]*[\\s\\t\\n]*",
+          DOLLOR_VAR: "([^$]*)?",
+          EJS_NO_OP_VAR: "[^=]([^%][^>]*)?"
+        };
         var variableMapper = {};
         function addToVariableMap(variable, readable) {
           variableMapper[variable] = readable;
         }
-
         var variablesMenu = [];
         function addInVarMenu(menuItem) {
           var exist = false;
@@ -44,25 +48,44 @@
             border: 0,
             background: "none"
           },
+          // variable plugin related
+          plugins: "variables code lists",
+          variable_mapper: variableMapper,
+          variable_prefix: "<%=",
+          variable_suffix: "%>",
+          extra_variable_ps: [
+            {
+              prefix: "<%",
+              suffix: "%>",
+              regex: REGEX.EJS_NO_OP_VAR
+            },
+            {
+              prefix: "$",
+              suffix: "$",
+              regex: REGEX.DOLLOR_VAR
+            }
+          ],
+          height: 1000, //TODO 740
+
+          //setup
           setup: function (editor) {
-            console.log("in setup ............................");
             window.tester = editor;
             var content = document.querySelector("textarea").value;
             var matchesEjsVar = content.match(
-              /<%=[\s\t\n]*[a-zA-Z.[\]]*[\s\t\n]*%>/g
+              new RegExp("<%=" + REGEX.EJS_OP_VAR + "%>", "g")
             );
             if (matchesEjsVar) {
               matchesEjsVar.forEach(function (match) {
                 //slice after "<%=".length to minus "%>".length
                 var newVar = match.slice(3, match.length - 2);
                 addToVariableMap(newVar, newVar.toUpperCase());
-                addInVarMenu({ text: newVar + " (scoped)", value: match });
+                addInVarMenu({ text: newVar + " (scoped)", value: match }); //TODO comment
               });
             }
-            console.log("variableMapper => ", variableMapper);
-            console.log("variablesMenu => ", variablesMenu);
 
-            var matchesDollarVars = content.match(/\$\w+\$/g);
+            var matchesDollarVars = content.match(
+              new RegExp("\\$" + REGEX.DOLLOR_VAR + "\\$", "g")
+            );
             if (matchesDollarVars) {
               matchesDollarVars.forEach(function (match) {
                 // trim $ from start and end
@@ -75,6 +98,7 @@
               });
             }
 
+            console.log(variableMapper);
             editor.ui.registry.addMenuButton("variables", {
               text: "Variables",
               tooltip: "Add variables in Template",
@@ -116,20 +140,13 @@
             //   });
             //   editor.setContent(content);
             // });
-          },
-
-          // variable plugin related
-          plugins: "variables code lists",
-          variable_mapper: variableMapper,
-          variable_prefix: "<%=",
-          variable_suffix: "%>",
-          height: 740,
+          }
           // variable_class: 'bbbx-my-variable',
           //variable_valid: ['username', 'sender', 'phone', 'community_name', 'email']
           // test block  ------------------------------------------------------
-          init_instance_callback: function (editor) {
-            console.log("Editor: " + editor.id + " is now initialized.");
-          }
+          // init_instance_callback: function (editor) {
+          //   console.log("Editor: " + editor.id + " is now initialized.");
+          // }
         });
       };
       var urlParams = new URLSearchParams(window.location.search);
