@@ -40,7 +40,7 @@ var files = fs.readdirSync("./default_templates/");
 // var dir = "./ScreenshotsItr3";
 
 //final shots
-var dir = "./ScreenshotsFinal";
+var dir = "./FinalShots";
 
 if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir);
