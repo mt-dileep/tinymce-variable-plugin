@@ -13,9 +13,9 @@
     <script type="text/javascript">
       window.loadTemplateAndInitTinyMce = function () {
         var REGEX = {
-          EJS_OP_VAR: "[\\s\\t\\n]*[a-zA-Z.0-9[\\]]*[\\s\\t\\n]*",
+          EJS_OP_VAR: "[\\s]*[a-zA-Z.0-9[\\]]*[\\s]*",
           DOLLOR_VAR: "([^$]*)?",
-          EJS_NO_OP_VAR: "[^=]([^%][^>]*)?"
+          EJS_NO_OP_VAR: "[^=]((?!%>).)*"
         };
         var variableMapper = {};
         function addToVariableMap(variable, readable) {
@@ -53,6 +53,7 @@
           variable_mapper: variableMapper,
           variable_prefix: "<%=",
           variable_suffix: "%>",
+          variable_regex: REGEX.EJS_OP_VAR,
           extra_variable_ps: [
             {
               prefix: "<%",
@@ -65,7 +66,7 @@
               regex: REGEX.DOLLOR_VAR
             }
           ],
-          height: 1000, //TODO 740
+          height: 1460, //TODO 740
 
           //setup
           setup: function (editor) {

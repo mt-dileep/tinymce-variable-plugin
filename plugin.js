@@ -42,9 +42,12 @@ tinymce.PluginManager.add("variables", function (editor) {
    * Prefix and suffix to use to mark a variable
    * @type {string}
    */
+
   var prefix = editor.getParam("variable_prefix", "{{");
   var suffix = editor.getParam("variable_suffix", "}}");
-  var stringVariableRegex = new RegExp(prefix + "(.*)?" + suffix, "g");
+  var regex = editor.getParam("variable_regex", "(.*)?");
+  // var stringVariableRegex = new RegExp(prefix + "(.*)?" + suffix, "g");
+  var stringVariableRegex = new RegExp(prefix + regex + suffix, "g");
 
   var extra_variable_ps = editor.getParam("extra_variable_ps");
   var otherVariableRegexArr = [];
