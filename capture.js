@@ -55,7 +55,7 @@ takeShots = () => {
     return;
   }
   let onlyName = files[i].split(".")[0];
-  let url = `/Users/dileep/.nvm/versions/node/v9.0.0/bin/pageres http://localhost:8000/tiny5.html\?template\=${onlyName} 10x720 --format=jpg --filename="${dir}/${onlyName}"`;
+  let url = `/Users/dileep/.nvm/versions/node/v9.0.0/bin/pageres http://localhost:8000/tiny5.html\?template\=${onlyName} 1280x800 --format=jpg --filename="${dir}/${onlyName}"`;
   console.log("processing file ...", i + 1);
   exec(url, (error, stdout, stderr) => {
     console.log("processed file", i + 1);
