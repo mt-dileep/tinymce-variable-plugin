@@ -36,6 +36,7 @@ tinymce.PluginManager.add("variables", function (editor) {
   var className = editor.getParam("variable_class", "variable");
 
   //TODO make generic
+  // var REGEX_SPECIAL_CHARS = ['\\','^','$','.','|','?','*','+','(',')','[','{'];
   escapeValue = (value) => (value == "$" ? "\\$" : value);
 
   /**
@@ -60,25 +61,6 @@ tinymce.PluginManager.add("variables", function (editor) {
       )
     });
   });
-
-  //TODO write generic
-  // console.log("otherVariableRegexArr: ", otherVariableRegexArr);
-  // var prefix2 = otherVariableRegexArr[0].prefix;
-  // var suffix2 = otherVariableRegexArr[0].suffix;
-  // var stringVariableRegex2 = otherVariableRegexArr[0].regex;
-  // var prefix3 = otherVariableRegexArr[1].prefix;
-  // var suffix3 = otherVariableRegexArr[1].suffix;
-  // var stringVariableRegex3 = otherVariableRegexArr[1].regex;
-
-  // var prefix2 = "<%";
-  // var suffix2 = "%>";
-  // var stringVariableRegex2 = new RegExp(
-  //   prefix2 + "[^=]([^%][^>]*)?" + suffix2,
-  //   "g"
-  // );
-  // var prefix3 = "\\$";
-  // var suffix3 = "\\$";
-  // var stringVariableRegex3 = new RegExp(prefix3 + "(.*)?" + suffix3, "g");
 
   /**
    * check if a certain variable is valid
@@ -256,16 +238,6 @@ tinymce.PluginManager.add("variables", function (editor) {
    * @return {void}
    */
   function handleContentRerender(e) {
-    console.log("before get content.............");
-    // tree walker test-------------------------
-    // var walker = new tinymce.dom.TreeWalker(
-    //   document.getElementById("templateContent_ifr")
-    // );
-
-    // do {
-    //   console.log(walker.current().toString().replaceAll("alt", "alt1"));
-    // } while (walker.next());
-    // tree walker test-------------------------
     // store cursor location
     return e.format === "raw" ? stringToHTML() : htmlToString();
     // restore cursor location
