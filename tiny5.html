@@ -73,7 +73,7 @@
           setup: function (editor) {
             
           editor.on('ExecCommand', function(e) {
-            console.log('The ' + e.command + ' command was fired.');
+            console.log('The ' + e.command + ' command was fired. value =>> ', e.value);
           });
               
             var content = document.querySelector("#templateContent").value;
@@ -141,14 +141,6 @@
           // variable_class: 'bbbx-my-variable',
           //variable_valid: ['username', 'sender', 'phone', 'community_name', 'email']
         })
-      //   .then(function (editor) {
-      //   var fonStyles = window.document.querySelector('[aria-label="Fonts"]');
-      //   var fontSize = window.document.querySelector('[aria-label="Font sizes"]');
-      //   var menuOpen = window.document.querySelector('.tox-menu');
-      //   if((fonStyles || fontSize) && menuOpen) menuOpen.addEventListener('click', function (e) {
-      //     console.log('font changed : ',e.target.innerHTML);
-      //   });
-      // });
       };
       var urlParams = new URLSearchParams(window.location.search);
       var templateToLoad = urlParams.get("template");
