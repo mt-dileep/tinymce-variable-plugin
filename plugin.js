@@ -34,10 +34,11 @@ tinymce.PluginManager.add("variables", function (editor) {
    * @type {string}
    */
   var className = editor.getParam("variable_class", "variable");
+  var codeClassName = editor.getParam("code_class", "code");
 
   //TODO make generic
   // var REGEX_SPECIAL_CHARS = ['\\','^','$','.','|','?','*','+','(',')','[','{'];
-  escapeValue = (value) => (value == "$" ? "\\$" : value);
+  escapeValue = function(value) {return (value == "$" ? value.replace('$','\\$') : value);};
 
   /**
    * Prefix and suffix to use to mark a variable
@@ -52,9 +53,10 @@ tinymce.PluginManager.add("variables", function (editor) {
 
   var extra_variable_ps = editor.getParam("extra_variable_ps");
   var otherVariableRegexArr = [];
-  extra_variable_ps.forEach((value) => {
+  extra_variable_ps.forEach(function(value) {
     otherVariableRegexArr.push({
-      ...value,
+      prefix: value.prefix,
+      suffix: value.suffix,
       regex: new RegExp(
         escapeValue(value.prefix) + value.regex + escapeValue(value.suffix),
         "g"
@@ -75,15 +77,15 @@ tinymce.PluginManager.add("variables", function (editor) {
     return validString.indexOf("|" + name + "|") > -1 ? true : false;
   }
 
-  function getMappedValue(cleanValue) {
+  function getMappedValue(cleanValue, value) {
     if (typeof mapper === "function") return mapper(cleanValue);
 
-    return mapper.hasOwnProperty(cleanValue) ? mapper[cleanValue] : "EJS_CODE";
+    return mapper.hasOwnProperty(cleanValue) ? {mapped : true, value: mapper[cleanValue]} : {mapped:false, value:value};
   }
 
   /**
    * Strip variable to keep the plain variable string
-   * @example "{test}" => "test"
+   * @example "{test}" -> "test"
    * @param {string} value
    * @return {string}
    */
@@ -106,33 +108,44 @@ tinymce.PluginManager.add("variables", function (editor) {
     // check if variable is valid
     if (!isValid(cleanValue)) return value;
 
-    var cleanMappedValue = getMappedValue(cleanValue);
-
+    var cleanMappedValue = prefix != "<%" ? getMappedValue(cleanValue, value) : "__code__";
+    
     editor.fire("variableToHTML", {
       value: value,
       cleanValue: cleanValue
     });
-
+    
     var variable = prefix + cleanValue + suffix;
-    return (
-      '<span class="' +
+    var htmlValue =  cleanMappedValue === "__code__" ? 
+    (
+      '<span><span class="' +
+      codeClassName +
+      '" data-original-variable="' +
+      variable +
+      '" contenteditable="false">' +
+      "code" +
+      "</span></span>"
+    ):
+    cleanMappedValue.mapped ? (
+      '<span><span class="' +
       className +
       '" data-original-variable="' +
       variable +
       '" contenteditable="false">' +
-      cleanMappedValue +
-      "</span>"
-    );
+      cleanMappedValue.value +
+      "</span></span>"
+    ): value;
+    return htmlValue;
   }
 
-  replaceOtherVariables = (nodeValue) => {
-    otherVariableRegexArr.forEach(({ prefix, suffix, regex }) => {
-      nodeValue = nodeValue.replace(regex, function (value) {
-        return createHTMLVariable(value, prefix, suffix);
+  function replaceOtherVariables(nodeValue) {
+    otherVariableRegexArr.forEach(function(item) {
+      nodeValue = nodeValue.replace(item.regex, function (value) {
+        return createHTMLVariable(value, item.prefix, item.suffix);
       });
     });
     return nodeValue;
-  };
+  }
   /**
    * convert variable strings into html elements
    * @return {void}
@@ -150,8 +163,8 @@ tinymce.PluginManager.add("variables", function (editor) {
           n.nodeType == 3 &&
           n.nodeValue &&
           (stringVariableRegex.test(n.nodeValue) ||
-            otherVariableRegexArr.some(({ regex }) => {
-              return regex.test(n.nodeValue);
+            otherVariableRegexArr.some(function(value){
+              return value.regex.test(n.nodeValue);
             }))
         ) {
           nodeList.push(n);

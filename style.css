@@ -1,18 +1,32 @@
 body {
   font-size: 14px;
-  line-height: 1.4em;
+  /* line-height: 1.4em; */
+}
+.code {
+  margin-left: 5px;
+  height: 14px;
+  width: 30px;
+  color: #FF8B35;
+  letter-spacing: 0;
+  line-height: 1.6em;
+  box-sizing: border-box;
+  height: 19px;
+  width: 36px;
+  border: 1px solid #E9E9E9;
+  border-radius: 2px;
+  background-color: #F5F6F7;
 }
 .variable {
-  cursor: default;
-  background-color: #65b9dd;
-  color: #fff;
-  padding: 2px 8px;
-  border-radius: 3px;
-  font-weight: bold;
-  font-style: normal;
-  font-size: 10px;
-  display: inline-block;
-  line-height: 12px;
+  height: 14px;
+  width: 145px;
+  color: #000000;
+  letter-spacing: 0.5px;
+  line-height: 1.6em;
+
+  height: 17px;
+  width: 150px;
+  border-radius: 2px;
+  background-color: #D6F0FF;
 }
 /* .mce-item-table,.mce-item-table td,.mce-item-table th,.mce-item-table caption {
     border: none
