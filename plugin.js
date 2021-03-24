@@ -35,6 +35,7 @@ tinymce.PluginManager.add("variables", function (editor) {
    */
   var className = editor.getParam("variable_class", "variable");
   var codeClassName = editor.getParam("code_class", "code");
+  var variableShowCode = editor.getParam("variable_showCode", false);
 
   //TODO make generic
   // var REGEX_SPECIAL_CHARS = ['\\','^','$','.','|','?','*','+','(',')','[','{'];
@@ -116,25 +117,32 @@ tinymce.PluginManager.add("variables", function (editor) {
     });
     
     var variable = prefix + cleanValue + suffix;
-    var htmlValue =  cleanMappedValue === "__code__" ? 
-    (
-      '<span><span class="' +
+    var htmlValue = cleanMappedValue === "__code__" || !cleanMappedValue.mapped ?
+    variableShowCode ? (
+      '<span class="' +
+      codeClassName +
+      '" data-original-variable="' +
+      variable +
+      '" >' +
+      cleanValue +
+      "</span>"
+    ):(
+      '<span><span data-tooltip="My code" data-tooltip-position="top"  class="' +
       codeClassName +
       '" data-original-variable="' +
       variable +
       '" contenteditable="false">' +
       "code" +
       "</span></span>"
-    ):
-    cleanMappedValue.mapped ? (
-      '<span><span class="' +
+    ):(
+      '<span><span data-tooltip="My Tooltip" data-tooltip-position="top"  class="' +
       className +
       '" data-original-variable="' +
       variable +
       '" contenteditable="false">' +
       cleanMappedValue.value +
       "</span></span>"
-    ): value;
+    );
     return htmlValue;
   }
 
@@ -146,6 +154,22 @@ tinymce.PluginManager.add("variables", function (editor) {
     });
     return nodeValue;
   }
+  // function testVariableIsMapped (regex, value){
+  //   var matches = value.match(regex);
+  //   if(!matches ) return false;
+  //    console.log("regex -> ", regex);
+  //   var i=0;
+  //   while (matches[i] != null) {
+  //     // console.log("matches[i] : ",matches[i])
+  //     // console.log(" --i = ",matches[i],  getMappedValue(matches[i]).value);
+  //     if(!getMappedValue(matches[i]).mapped) {
+  //       return false;
+  //     }
+  //     i++;
+  //   }
+  //   console.log("----------> ", true);
+  //   return true;
+  // }
   /**
    * convert variable strings into html elements
    * @return {void}
@@ -156,6 +180,22 @@ tinymce.PluginManager.add("variables", function (editor) {
       node,
       div;
     // find nodes that contain a string variable
+    // tinymce.walk(
+    //   editor.getBody(),
+    //   function (n) {
+    //     if (
+    //       n.nodeType == 3 &&
+    //       n.nodeValue &&
+    //       ( testVariableIsMapped(stringVariableRegex,n.nodeValue) ||
+    //         otherVariableRegexArr.some(function(value){
+    //           return testVariableIsMapped(value.regex, n.nodeValue);
+    //         }))
+    //     ) {
+    //       nodeList.push(n);
+    //     }
+    //   },
+    //   "childNodes"
+    // );
     tinymce.walk(
       editor.getBody(),
       function (n) {
